@@ -15,8 +15,8 @@ namespace ProtectedVariable
             public void OnValueInvalid(dynamic eventInfo)
             {
                 Console.WriteLine($@"Invalid value injection detected.");
-                Console.WriteLine($@"InjectedValue:{eventInfo.injectedValue}");
-                Console.WriteLine($@"ProtectedValue:{eventInfo.protectedValue}");
+                Console.WriteLine($@"InjectedValue:{eventInfo.InjectedValue}");
+                Console.WriteLine($@"OriginalValue:{eventInfo.OriginalValue}");
             }
 
             public void Run()

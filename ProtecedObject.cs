@@ -59,8 +59,8 @@ namespace ProtectedVariable
                 if (ProtecedObjectCallBack != null)
                 {
                     dynamic eventInfo = new ExpandoObject();
-                    eventInfo.injectedValue = _value;
-                    eventInfo.protectedValue = protectedValue;
+                    eventInfo.InjectedValue = _value;
+                    eventInfo.OriginalValue = protectedValue;
 
                     ProtecedObjectCallBack.OnValueInvalid(eventInfo);
                 }
