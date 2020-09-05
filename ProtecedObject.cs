@@ -11,25 +11,23 @@ namespace ProtectedVariable
 
     public abstract class ProtecedObject<T>
     {
-        private object Factor1 { get; set; }
-        private object Factor2 { get; set; }
         public T Value
         {
             get
             {
-                if (IsValueValid())
+                if (!IsValueValid())
                 {
                     if (ProtecedObjectCallBack != null)
                     {
                         ProtecedObjectCallBack.OnValueInvalid();
                     }
                 }
-                IsValueValid();
-                return default;
+
+                return GetValue();
             }
             set
             {
-
+                SetValue(value);
             }
         }
 
@@ -47,7 +45,9 @@ namespace ProtectedVariable
 
         protected abstract bool IsValueValid();
 
-        public abstract void RefreshValue();
+        protected abstract T GetValue();
+
+        protected abstract void SetValue(T value);
 
     }
 }
