@@ -7,29 +7,42 @@ namespace ProtectedVariable
     {
         static void Main(string[] args)
         {
-            Random ran = new Random();
-            int randomInt = 0;
+            new Demo().Run();
+        }
 
-            randomInt = ran.Next();
-            Console.WriteLine($@"Setting protecedObject1 value to {randomInt}");
-            ProtecedObject<int> protecedObject1 = new ProtecedInteger(randomInt);
-
-            randomInt = ran.Next();
-
-            Console.WriteLine($@"Setting protecedObject2 value to {randomInt}");
-            ProtecedObject<int> protecedObject2 = new ProtecedInteger(randomInt);
-
-            while (true)
+        class Demo : ProtecedObjectCallBack
+        {
+            public void OnValueInvalid(dynamic eventInfo)
             {
-                Console.WriteLine($@"protecedObject1 value: {protecedObject1.Value}");
-                Console.WriteLine($@"protecedObject2 value: {protecedObject2.Value}");
-                var keyInfo = Console.ReadKey();
-                if (keyInfo.Key == ConsoleKey.Enter)
+                Console.WriteLine($@"Invalid value injection detected.");
+                Console.WriteLine($@"InjectedValue:{eventInfo.injectedValue}");
+                Console.WriteLine($@"ProtectedValue:{eventInfo.protectedValue}");
+            }
+
+            public void Run()
+            {
+                Random ran = new Random();
+                int randomInt = ran.Next(10, 100);
+                Console.WriteLine($@"Setting protecedObject1 value to {randomInt}");
+                ProtecedObject<int> protecedObject1 = new ProtecedInteger(randomInt, this);
+
+                randomInt = ran.Next(10, 100);
+
+                Console.WriteLine($@"Setting protecedObject2 value to {randomInt}");
+                ProtecedObject<int> protecedObject2 = new ProtecedInteger(randomInt);
+
+                while (true)
                 {
-                    randomInt = ran.Next();
-                    protecedObject1.Value = randomInt;
+                    Console.WriteLine($@"protecedObject1 value: {protecedObject1.Value}");
+                    Console.WriteLine($@"protecedObject2 value: {protecedObject2.Value}");
+                    var keyInfo = Console.ReadKey();
+                    if (keyInfo.Key == ConsoleKey.Enter)
+                    {
+                        randomInt = ran.Next(10, 100);
+                        protecedObject1.Value = randomInt;
+                    }
+                    Console.WriteLine();
                 }
-                Console.WriteLine();
             }
         }
     }

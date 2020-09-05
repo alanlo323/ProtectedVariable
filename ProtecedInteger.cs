@@ -33,13 +33,12 @@ namespace ProtectedVariable
 
         protected override int GetValue()
         {
-            //eturn Factor1;
             return (int)(Factor2 / Factor1);
         }
 
         protected override bool IsValueValid()
         {
-            return true;
+            return _value == (int)(Factor2 / Factor1);
         }
 
         protected override void SetValue(int value)

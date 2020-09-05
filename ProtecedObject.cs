@@ -1,33 +1,34 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Dynamic;
 using System.Text;
 
 namespace ProtectedVariable
 {
     public interface ProtecedObjectCallBack
     {
-        void OnValueInvalid();
+        void OnValueInvalid(dynamic eventInfo);
     }
 
     public abstract class ProtecedObject<T>
     {
+        protected T _value;
+
         public T Value
         {
             get
             {
-                if (!IsValueValid())
-                {
-                    if (ProtecedObjectCallBack != null)
-                    {
-                        ProtecedObjectCallBack.OnValueInvalid();
-                    }
-                }
+                CheckIntegrity();
 
-                return GetValue();
+                _value = GetValue();
+                return _value;
             }
             set
             {
+                CheckIntegrity();
+
                 SetValue(value);
+                _value = value;
             }
         }
 
@@ -48,6 +49,23 @@ namespace ProtectedVariable
         protected abstract T GetValue();
 
         protected abstract void SetValue(T value);
+
+        protected void CheckIntegrity()
+        {
+            T protectedValue = GetValue();
+
+            if (!IsValueValid())
+            {
+                if (ProtecedObjectCallBack != null)
+                {
+                    dynamic eventInfo = new ExpandoObject();
+                    eventInfo.injectedValue = _value;
+                    eventInfo.protectedValue = protectedValue;
+
+                    ProtecedObjectCallBack.OnValueInvalid(eventInfo);
+                }
+            }
+        }
 
     }
 }
