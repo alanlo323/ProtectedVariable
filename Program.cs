@@ -35,13 +35,14 @@ namespace ProtectedVariable
                 {
                     Console.WriteLine($@"protecedObject1 value: {protecedObject1.Value}");
                     Console.WriteLine($@"protecedObject2 value: {protecedObject2.Value}");
+                    Console.WriteLine();
+
                     var keyInfo = Console.ReadKey();
                     if (keyInfo.Key == ConsoleKey.Enter)
                     {
                         randomInt = ran.Next(10, 100);
                         protecedObject1.Value = randomInt;
                     }
-                    Console.WriteLine();
                 }
             }
         }
