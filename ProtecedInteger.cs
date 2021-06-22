@@ -5,15 +5,13 @@ using System.Text;
 
 namespace ProtectedVariable
 {
-
     public class ProtecedInteger : ProtecedObject<int>
     {
-
         private static int? factor1Instance;
 
-        public ProtecedInteger(int Value, ProtecedObjectCallBack ProtecedObjectCallBack = null) : base(Value, ProtecedObjectCallBack)
+        public ProtecedInteger(int value) : base(value)
         {
-            this.Value = Value;
+            this.Value = value;
         }
 
         private static int Factor1
@@ -24,12 +22,54 @@ namespace ProtectedVariable
                 {
                     string stringData = DateTime.Now.Millisecond.ToString();
                     factor1Instance = Convert.ToInt32(DateTime.Now.Millisecond.ToString().Substring(0, Math.Min(2, stringData.Length)));
-
                 }
                 return (int)factor1Instance;
             }
         }
+
         private BigInteger Factor2 { get; set; }
+
+        public static ProtecedInteger operator -(ProtecedInteger a, ProtecedInteger b) => new ProtecedInteger(a.Value - b.Value);
+
+        public static bool operator !=(ProtecedInteger a, ProtecedInteger b) => a.Value != b.Value;
+
+        public static ProtecedInteger operator %(ProtecedInteger a, ProtecedInteger b) => new ProtecedInteger(a.Value % b.Value);
+
+        public static ProtecedInteger operator &(ProtecedInteger a, ProtecedInteger b) => new ProtecedInteger(a.Value & b.Value);
+
+        public static ProtecedInteger operator *(ProtecedInteger a, ProtecedInteger b) => new ProtecedInteger(a.Value * b.Value);
+
+        public static ProtecedInteger operator /(ProtecedInteger a, ProtecedInteger b) => new ProtecedInteger(a.Value / b.Value);
+
+        public static ProtecedInteger operator ^(ProtecedInteger a, ProtecedInteger b) => new ProtecedInteger(a.Value ^ b.Value);
+
+        public static ProtecedInteger operator |(ProtecedInteger a, ProtecedInteger b) => new ProtecedInteger(a.Value | b.Value);
+
+        public static ProtecedInteger operator +(ProtecedInteger a, ProtecedInteger b) => new ProtecedInteger(a.Value + b.Value);
+
+        public static bool operator <(ProtecedInteger a, ProtecedInteger b) => a.Value < b.Value;
+
+        public static ProtecedInteger operator <<(ProtecedInteger a, int b) => new ProtecedInteger(a.Value << b);
+
+        public static bool operator <=(ProtecedInteger a, ProtecedInteger b) => a.Value <= b.Value;
+
+        public static bool operator ==(ProtecedInteger a, ProtecedInteger b) => a.Value == b.Value;
+
+        public static bool operator >(ProtecedInteger a, ProtecedInteger b) => a.Value > b.Value;
+
+        public static bool operator >=(ProtecedInteger a, ProtecedInteger b) => a.Value >= b.Value;
+
+        public static ProtecedInteger operator >>(ProtecedInteger a, int b) => new ProtecedInteger(a.Value >> b);
+
+        public override bool Equals(object obj)
+        {
+            return base.Equals(obj);
+        }
+
+        public override int GetHashCode()
+        {
+            return base.GetHashCode();
+        }
 
         protected override int GetValue()
         {

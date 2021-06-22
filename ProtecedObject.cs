@@ -5,14 +5,20 @@ using System.Text;
 
 namespace ProtectedVariable
 {
-    public interface ProtecedObjectCallBack
-    {
-        void OnValueInvalid(dynamic eventInfo);
-    }
-
-    public abstract class ProtecedObject<T>
+    public abstract class ProtecedObject<T> : IObservable<object>
     {
         protected T _value;
+        protected List<IObserver<object>> observers;
+
+        public ProtecedObject()
+        {
+            observers = new List<IObserver<object>>();
+        }
+
+        public ProtecedObject(T value) : this()
+        {
+            this.Value = value;
+        }
 
         public T Value
         {
@@ -32,23 +38,27 @@ namespace ProtectedVariable
             }
         }
 
-        private ProtecedObjectCallBack ProtecedObjectCallBack { get; set; }
-
-        public ProtecedObject(ProtecedObjectCallBack ProtecedObjectCallBack = null)
+        public override bool Equals(object obj)
         {
-            this.ProtecedObjectCallBack = ProtecedObjectCallBack;
+            return this.Value != null ? this.Value.Equals(obj) : obj == null;
         }
 
-        public ProtecedObject(T Value, ProtecedObjectCallBack ProtecedObjectCallBack = null) : this(ProtecedObjectCallBack)
+        public override int GetHashCode()
         {
-            this.Value = Value;
+            return base.GetHashCode();
         }
 
-        protected abstract bool IsValueValid();
+        public IDisposable Subscribe(IObserver<object> observer)
+        {
+            if (!observers.Contains(observer))
+                observers.Add(observer);
+            return new Unsubscriber(observers, observer);
+        }
 
-        protected abstract T GetValue();
-
-        protected abstract void SetValue(T value);
+        public override string ToString()
+        {
+            return $@"{this.Value}";
+        }
 
         protected void CheckIntegrity()
         {
@@ -56,16 +66,38 @@ namespace ProtectedVariable
 
             if (!IsValueValid())
             {
-                if (ProtecedObjectCallBack != null)
+                observers.ForEach(observer =>
                 {
-                    dynamic eventInfo = new ExpandoObject();
-                    eventInfo.InjectedValue = _value;
-                    eventInfo.OriginalValue = protectedValue;
-
-                    ProtecedObjectCallBack.OnValueInvalid(eventInfo);
-                }
+                    Exception ex = new AccessViolationException();
+                    ex.Data.Add("InjectedValue", _value);
+                    ex.Data.Add("OriginalValue", protectedValue);
+                    observer.OnError(ex);
+                });
             }
         }
 
+        protected abstract T GetValue();
+
+        protected abstract bool IsValueValid();
+
+        protected abstract void SetValue(T value);
+
+        private class Unsubscriber : IDisposable
+        {
+            private IObserver<object> _observer;
+            private List<IObserver<object>> _observers;
+
+            public Unsubscriber(List<IObserver<object>> observers, IObserver<object> observer)
+            {
+                this._observers = observers;
+                this._observer = observer;
+            }
+
+            public void Dispose()
+            {
+                if (_observer != null && _observers.Contains(_observer))
+                    _observers.Remove(_observer);
+            }
+        }
     }
 }
