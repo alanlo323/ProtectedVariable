@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Numerics;
+using System.Collections.Generic;
 
 namespace ProtectedVariable
 {
@@ -18,8 +18,10 @@ namespace ProtectedVariable
             public void OnError(Exception error)
             {
                 Console.WriteLine($@"Invalid value injection detected.");
-                Console.WriteLine($@"InjectedValue:{error.Data["InjectedValue"]}");
-                Console.WriteLine($@"OriginalValue:{error.Data["OriginalValue"]}");
+                foreach (var key in error.Data.Keys)
+                {
+                    Console.WriteLine($@"{key}: {error.Data[key]}");
+                }
             }
 
             public void OnNext(object value)
