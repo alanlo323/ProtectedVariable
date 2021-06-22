@@ -27,6 +27,7 @@ namespace ProtectedVariable
                 CheckIntegrity();
 
                 _value = GetValue();
+                observers.ForEach(observer => { observer.OnCompleted(); });
                 return _value;
             }
             set
@@ -35,6 +36,7 @@ namespace ProtectedVariable
 
                 SetValue(value);
                 _value = value;
+                observers.ForEach(observer => { observer.OnNext(_value); });
             }
         }
 
